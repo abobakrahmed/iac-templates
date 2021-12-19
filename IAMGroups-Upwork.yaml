@@ -1,0 +1,58 @@
+Resources:
+  VTTAdmin:
+    Type: 'AWS::IAM::Group'
+    Properties:
+      GroupName: VTTAdmin
+  VTTUsers:
+    Type: AWS::IAM::User
+    Properties:
+      Groups:
+        - !Ref VTTAdmin
+      LoginProfile:
+          Password: 237742767952
+          PasswordResetRequired: yes
+      UserName: chris.marr@vt.team
+  AdminPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: AdminPolicy
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Action: ['*']
+          Resource: '*'
+          Condition:
+              BoolIfExists:
+                    aws:MultiFactorAuthPresent: false
+      Groups:
+        - !Ref VTTAdmin
+  VTTSupport:
+    Type: 'AWS::IAM::Group'
+    Properties:
+      GroupName: VTTSupport
+  VTTUsersSupport:
+    Type: AWS::IAM::User
+    Properties:
+      Groups:
+        - !Ref VTTSupport
+      LoginProfile:
+          Password: 237742767952
+          PasswordResetRequired: no
+      UserName: pvb@vt.team
+  SupportPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: SupportPolicy
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Action: [ 'lambda:*', 'iam:GetRole', 'iam:GetPolicy', 'iam:GetGroup','iam:GetPolicyVersion', 'iam:CreatePolicy', 'iam:GetRolePolicy',
+                    'iam:ListRolePolicies', 'iam:AttachRolePolicy', 'iam:PassRole', 'events:*', 'logs:*', 'iam:ListAttachedRolePolicies',
+                    's3:*', 'iam:ListRoles', 'comprehend:*', 's3:ListAllMyBuckets', 'iam:CreateRole', 's3:ListBucket', 's3:GetBucketLocation',
+                    'iam:ListMFADevices', 'iam:EnableMFADevice', 'iam:*MFADevice', 'iam:*LoginProfile', 'comprehend:*', 'polly:*', 'lex:*', 'connect:*', 'transcribe:*']
+          Resource: '*'
+          Condition:
+              BoolIfExists:
+                    aws:MultiFactorAuthPresent: false
+      Groups:
+        - !Ref VTTSupport
